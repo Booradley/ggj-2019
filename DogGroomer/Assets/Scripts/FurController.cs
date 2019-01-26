@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class FurController : MonoBehaviour
@@ -9,57 +10,113 @@ public class FurController : MonoBehaviour
     private ParticleSystem _particleSystem;
 
     [SerializeField]
-    private MeshFilter _meshFilter;
+    private ParticleSystem _cutFurParticleSystem;
+
+    [SerializeField]
+    private SkinnedMeshRenderer _skinnedMeshRenderer;
+
+    [SerializeField]
+    private Razor _razor;
+
+    [SerializeField, Range(0, 1)]
+    private float _hairLength;
 
     private List<Fur> _fur = new List<Fur>();
     private ParticleSystem.Particle[] _particles;
+    List<ParticleSystem.Particle> enter = new List<ParticleSystem.Particle>();
     private bool _isReady;
 
     private void Awake()
     {
         var emitParams = new ParticleSystem.EmitParams();
         emitParams.velocity = Vector3.zero;
-        emitParams.startLifetime = 99999;
+        emitParams.startLifetime = 9999999f;
+        emitParams.startSize = 0.025f;
 
-        Vector3[] vertices = _meshFilter.mesh.vertices;
-        int count = _meshFilter.mesh.vertexCount;
+        Mesh mesh = new Mesh();
+        _skinnedMeshRenderer.BakeMesh(mesh);
+
+        Vector3[] vertices = mesh.vertices;
+        Vector3[] normals = mesh.normals;
+
+        int count = mesh.vertexCount;
         for (int i = 0; i < count; i++)
         {
-            vertices[i] = Vector3.Scale(vertices[i], transform.localScale);
             for (int j = 0; j < FUR_NODES; j++)
             {
-                emitParams.rotation3D = Random.rotation.eulerAngles;
+                emitParams.rotation3D = UnityEngine.Random.rotation.eulerAngles;
 
                 _particleSystem.Emit(emitParams, 1);
             }
         }
 
         _particleSystem.Play();
-
         _particles = new ParticleSystem.Particle[_particleSystem.particleCount];
         _particleSystem.GetParticles(_particles);
 
+        int stride = 0;
         for (int i = 0; i < count; i++)
         {
             Fur fur = new Fur(transform);
-            for (int j = 0; j < FUR_NODES; j++)
-            {
-                fur.AddParticle(_particles[i + j]);
-            }
+            fur.UpdateParticles(ref _particles, stride, vertices[i], normals[i], _hairLength, true);
 
             _fur.Add(fur);
+
+            stride += FUR_NODES;
         }
+
+        _particleSystem.SetParticles(_particles, _particles.Length);
 
         _isReady = true;
     }
 
-    private void Update()
+    public void SetActiveRazor(Razor razor)
+    {
+        _razor = razor;
+    }
+
+    private void OnParticleTrigger()
+    {
+        int numEnter = _particleSystem.GetTriggerParticles(ParticleSystemTriggerEventType.Enter, enter);
+        for (int i = 0; i < numEnter; i++)
+        {
+            ParticleSystem.Particle p = enter[i];
+
+            if (p.remainingLifetime == 0f)
+                continue;
+
+            p.remainingLifetime = 0f;
+            enter[i] = p;
+
+            SpawnCutFur(p.position);
+        }
+        
+        _particleSystem.SetTriggerParticles(ParticleSystemTriggerEventType.Enter, enter);
+    }
+
+    private void SpawnCutFur(Vector3 position)
+    {
+        var emitParams = new ParticleSystem.EmitParams();
+        emitParams.velocity = Vector3.zero;
+        emitParams.startLifetime = 9999999f;
+        emitParams.startSize = 0.025f;
+        emitParams.position = position;
+        emitParams.rotation3D = UnityEngine.Random.rotation.eulerAngles;
+        emitParams.velocity = UnityEngine.Random.insideUnitSphere;
+
+        _cutFurParticleSystem.Emit(emitParams, 1);
+    }
+
+    private void LateUpdate()
     {
         if (!_isReady)
             return;
 
-        Vector3[] vertices = _meshFilter.mesh.vertices;
-        Vector3[] normals = _meshFilter.mesh.normals;
+        Mesh mesh = new Mesh();
+        _skinnedMeshRenderer.BakeMesh(mesh);
+
+        Vector3[] vertices = mesh.vertices;
+        Vector3[] normals = mesh.normals;
 
         _particleSystem.GetParticles(_particles);
 
@@ -67,16 +124,9 @@ public class FurController : MonoBehaviour
         int stride = 0;
         for (int i = 0; i < count; i++)
         {
-            for (int j = 0; j < FurController.FUR_NODES; j++)
-            {
-                ParticleSystem.Particle particle = _particles[stride + j];
-                particle.position = transform.TransformPoint(vertices[i] + (transform.TransformDirection(normals[i])));
-                _particles[stride + j] = particle;
-            }
+            _fur[i].UpdateParticles(ref _particles, stride, vertices[i], normals[i], _hairLength);
 
             stride += FUR_NODES;
-
-            //_fur[i].UpdateParticles(vertices[i], particleDirection[i]);
         }
 
         _particleSystem.SetParticles(_particles, _particles.Length);
