@@ -9,15 +9,15 @@ public class Fur
         _transform = transform;
     }
 
-    public void UpdateParticles(ref ParticleSystem.Particle[] particles, int stride, Vector3 vertexPosition, Vector3 vertexNormal, float hairLength, bool forcePosition = false)
+    public void UpdateParticles(ref ParticleSystem.Particle[] particles, int stride, Vector3 vertexPosition, Vector3 vertexNormal, float hairLength, int hairNodes, bool forcePosition = false)
     {
-        for (int j = 0; j < FurController.FUR_NODES; j++)
+        for (int j = 0; j < hairNodes; j++)
         {
             ParticleSystem.Particle particle = particles[stride + j];
 
-            Vector3 normalOffset = _transform.TransformDirection(vertexNormal) * (1f - (float)(j + 1) / (float)FurController.FUR_NODES) * hairLength;
+            Vector3 normalOffset = vertexNormal * (1f - (float)(j + 1) / (float)hairNodes) * hairLength;
 
-            float ratio = ((float)j / (float)(FurController.FUR_NODES - 1) * 0.5f);
+            float ratio = ((float)j / (float)(hairNodes - 1) * 0.5f);
 
             if (forcePosition)
             {

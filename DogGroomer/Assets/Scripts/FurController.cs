@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class FurController : MonoBehaviour
 {
-    public const int FUR_NODES = 3;
-
     [SerializeField]
     private ParticleSystem _particleSystem;
 
@@ -18,8 +16,11 @@ public class FurController : MonoBehaviour
     [SerializeField]
     private Razor _razor;
 
-    [SerializeField, Range(0, 1)]
+    [SerializeField, Range(0f, 1f)]
     private float _hairLength;
+
+    [SerializeField, Range(1, 10)]
+    private int _hairNodes;
 
     private List<Fur> _fur = new List<Fur>();
     private ParticleSystem.Particle[] _particles;
@@ -38,11 +39,12 @@ public class FurController : MonoBehaviour
 
         Vector3[] vertices = mesh.vertices;
         Vector3[] normals = mesh.normals;
+        Color32[] colors = mesh.colors32;
 
         int count = mesh.vertexCount;
         for (int i = 0; i < count; i++)
         {
-            for (int j = 0; j < FUR_NODES; j++)
+            for (int j = 0; j < _hairNodes; j++)
             {
                 emitParams.rotation3D = UnityEngine.Random.rotation.eulerAngles;
 
@@ -55,14 +57,18 @@ public class FurController : MonoBehaviour
         _particleSystem.GetParticles(_particles);
 
         int stride = 0;
+
         for (int i = 0; i < count; i++)
         {
+            float hairLength = GetHairLength(colors[i]);
+            int hairNodes = GetHairNodes(colors[i]);
+
             Fur fur = new Fur(transform);
-            fur.UpdateParticles(ref _particles, stride, vertices[i], normals[i], _hairLength, true);
+            fur.UpdateParticles(ref _particles, stride, vertices[i], normals[i], hairLength, hairNodes, true);
 
             _fur.Add(fur);
 
-            stride += FUR_NODES;
+            stride += _hairNodes;
         }
 
         _particleSystem.SetParticles(_particles, _particles.Length);
@@ -117,6 +123,7 @@ public class FurController : MonoBehaviour
 
         Vector3[] vertices = mesh.vertices;
         Vector3[] normals = mesh.normals;
+        Color32[] colors = mesh.colors32;
 
         _particleSystem.GetParticles(_particles);
 
@@ -124,11 +131,24 @@ public class FurController : MonoBehaviour
         int stride = 0;
         for (int i = 0; i < count; i++)
         {
-            _fur[i].UpdateParticles(ref _particles, stride, vertices[i], normals[i], _hairLength);
+            float hairLength = GetHairLength(colors[i]);
+            int hairNodes = GetHairNodes(colors[i]);
 
-            stride += FUR_NODES;
+            _fur[i].UpdateParticles(ref _particles, stride, vertices[i], normals[i], hairLength, hairNodes);
+
+            stride += _hairNodes;
         }
 
         _particleSystem.SetParticles(_particles, _particles.Length);
+    }
+
+    private float GetHairLength(Color32 color)
+    {
+        return _hairLength * (color.r / 255f);
+    }
+
+    private int GetHairNodes(Color32 color)
+    {
+        return _hairNodes;
     }
 }
