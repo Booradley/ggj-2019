@@ -137,7 +137,7 @@ public class FurController : MonoBehaviour
             }
         }
     }
-
+    
     private void OnParticleTrigger()
     {
         int numEnter = _particleSystem.GetTriggerParticles(ParticleSystemTriggerEventType.Enter, _enterParticles);
