@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class FurController : MonoBehaviour
 {
@@ -58,11 +59,18 @@ public class FurController : MonoBehaviour
     private void Awake()
     {
         Reset();
+    }
 
+    public IEnumerator Start()
+    {
         StartCoroutine(IdleSequence());
         StartCoroutine(BlinkSequence());
         StartCoroutine(WagSequence());
         StartCoroutine(TongueSequence());
+
+        SteamVR_Fade.Start(Color.clear, 1.0f);
+
+        yield return new WaitForSeconds(1.0f);
     }
 
     public void Reset()
@@ -181,7 +189,11 @@ public class FurController : MonoBehaviour
         while (true)
         {
             float roll = UnityEngine.Random.value;
-            if (roll < 0.5f)
+            if (roll < 0.25f)
+            {
+                _animator.SetTrigger("Shake");
+            }
+            else if (roll < 0.5f)
             {
                 _animator.SetTrigger("Look");
             }

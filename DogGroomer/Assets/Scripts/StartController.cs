@@ -1,5 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 using UnityEngine.SceneManagement;
+using Valve.VR;
 using Valve.VR.InteractionSystem;
 
 public class StartController : MonoBehaviour
@@ -15,6 +18,16 @@ public class StartController : MonoBehaviour
     private void OnStart(Hand hand)
     {
         _startButton.onButtonUp.RemoveAllListeners();
+
+        StartCoroutine(StartSequence());
+    }
+
+    private IEnumerator StartSequence()
+    {
+        SteamVR_Fade.Start(Color.white, 1.0f);
+
+        yield return new WaitForSeconds(1.0f);
+
         SceneManager.LoadScene("Main");
     }
 }
