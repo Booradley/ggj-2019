@@ -69,15 +69,11 @@ public class EyeController : MonoBehaviour
                 _leftEye.LookAt(_target);
                 _rightEye.LookAt(_target);
                 _rightEye.Rotate(new Vector3(0f, 180f, 0f), Space.Self);
-
-                Debug.Log(_target.name);
             }
             else
             {
                 _leftEye.rotation = _initialLeftEyeRotation;
                 _rightEye.rotation = _initialRightEyeRotation;
-
-                Debug.Log("None");
             }
 
             yield return null;
