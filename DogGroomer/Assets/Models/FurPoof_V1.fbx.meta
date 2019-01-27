@@ -1,21 +1,17 @@
 fileFormatVersion: 2
-guid: 9dc80a18c6f5fd14990391cfc94139b8
+guid: a03f5972864665c47a9427a93f5faf8c
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
-    100002: SHAVR_SET_PROXY_V01 1
     400000: //RootNode
-    400002: SHAVR_SET_PROXY_V01 1
-    2100000: lambert1
-    2100002: GGJ_PALETTE
-    2300000: SHAVR_SET_PROXY_V01 1
-    3300000: SHAVR_SET_PROXY_V01 1
-    4300000: SHAVR_SET_PROXY_V01
-    2186277476908879412: ImportLogs
+    2100000: Scene_Material
+    2300000: //RootNode
+    3300000: //RootNode
+    4300000: cube
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -44,13 +40,13 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 10
     meshCompression: 0
     addColliders: 0
-    importVisibility: 1
-    importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
@@ -71,7 +67,7 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-  importAnimation: 1
+  importAnimation: 0
   copyAvatar: 0
   humanDescription:
     serializedVersion: 2

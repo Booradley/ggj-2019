@@ -12,7 +12,7 @@ public class Fur
         _offsets = new List<Vector3>();
         for (int i = 0; i < hairNodes; i++)
         {
-            _offsets.Add(Vector3.zero);
+            _offsets.Add(Random.insideUnitSphere * 0.02f);
         }
     }
 
