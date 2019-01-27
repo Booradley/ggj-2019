@@ -29,10 +29,31 @@ public class Razor : MonoBehaviour
     private bool _isOn;
     public bool isOn { get { return _isOn; } }
 
+    private Quaternion _initialRotation;
+    private Vector3 _initialPosition;
     private Hand _hand;
     private Coroutine _onCoroutine;
     private Coroutine _cutCoroutine;
+    private Coroutine _cutEndCoroutine;
     private bool _needsCut = false;
+
+    private void Start()
+    {
+        _initialPosition = transform.position;
+        _initialRotation = transform.rotation;
+    }
+
+    public void Reset()
+    {
+        if (_interactable.attachedToHand != null)
+        {
+            _interactable.attachedToHand.DetachObject(gameObject);
+            _interactable.attachedToHand.HoverUnlock(_interactable);
+        }
+
+        transform.position = _initialPosition;
+        transform.rotation = _initialRotation;
+    }
 
     private void HandHoverUpdate(Hand hand)
     {
@@ -80,7 +101,7 @@ public class Razor : MonoBehaviour
     {
         _audioSource.loop = true;
         _audioSource.clip = _onAudioClip;
-        _audioSource.volume = 0.25f;
+        _audioSource.volume = 0.05f;
         _audioSource.Play();
 
         WaitForSeconds interval = new WaitForSeconds(0.1f);
@@ -100,49 +121,60 @@ public class Razor : MonoBehaviour
     {
         _needsCut = true;
 
+        if (_cutEndCoroutine != null)
+        {
+            StopCoroutine(_cutEndCoroutine);
+            _cutEndCoroutine = null;
+        }
+
+        _cutEndCoroutine = StartCoroutine(CutEndSequence());
+
         if (_cutCoroutine == null)
         {
-            StartCoroutine(CutSequence());
+            _cutCoroutine = StartCoroutine(CutSequence());
         }
+    }
+
+    private IEnumerator CutEndSequence()
+    {
+        yield return new WaitForSeconds(0.15f);
+
+        _needsCut = false;
+        _cutEndCoroutine = null;
     }
 
     private IEnumerator CutSequence()
     {
-        if (_cutCoroutine != null)
-        {
-            StopCoroutine(_cutCoroutine);
-            _cutCoroutine = null;
-        }
-
+        _audioSourceCut.volume = 0f;
+        _audioSourceCut.clip = _cutAudioClip;
         _audioSourceCut.Play();
 
         float ratio;
         for (int i = 0; i < 10; i++)
         {
-            ratio = (float)i / 10f;
-            _audioSource.volume = 0.25f * (1f - ratio);
-            _audioSourceCut.volume = 0.25f * ratio;
+            ratio = (float)(i + 1) / 10f;
+            _audioSource.volume = 0.05f * (1f - ratio);
+            _audioSourceCut.volume = 0.10f * ratio;
 
             yield return null;
         }
 
         while (_needsCut)
         {
-            _needsCut = false;
-
-            yield return new WaitForSeconds(0.1f);
+            yield return null;
         }
 
         for (int i = 0; i < 10; i++)
         {
-            ratio = (float)i / 10f;
-            _audioSource.volume = 0.25f * ratio;
-            _audioSourceCut.volume = 0.25f * (1f - ratio);
+            ratio = (float)(i + 1) / 10f;
+            _audioSource.volume = 0.05f * ratio;
+            _audioSourceCut.volume = 0.10f * (1f - ratio);
 
             yield return null;
         }
 
         _audioSourceCut.Stop();
+        _cutCoroutine = null;
     }
 
     private void TurnOff()
@@ -159,10 +191,17 @@ public class Razor : MonoBehaviour
             _cutCoroutine = null;
         }
 
+        if (_cutEndCoroutine != null)
+        {
+            StopCoroutine(_cutEndCoroutine);
+            _cutEndCoroutine = null;
+        }
+
         _audioSource.Stop();
         _audioSourceCut.Stop();
 
         _hand = null;
         _isOn = false;
+        _needsCut = false;
     }
 }

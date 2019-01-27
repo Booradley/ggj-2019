@@ -21,12 +21,11 @@ GameObject:
   - component: {fileID: 4887720401443256}
   - component: {fileID: 54127849209188716}
   - component: {fileID: 114951157377213796}
+  - component: {fileID: 82043602550801930}
   - component: {fileID: 114724345027698728}
   - component: {fileID: 114180127751081740}
   - component: {fileID: 114279821996958270}
   - component: {fileID: 114171182240202064}
-  - component: {fileID: 82043602550801930}
-  - component: {fileID: 82763856641438690}
   m_Layer: 0
   m_Name: Razor
   m_TagString: Untagged
@@ -77,7 +76,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4405821565120454}
   - component: {fileID: 33467622292314466}
-  - component: {fileID: 23753691380428074}
   - component: {fileID: 65126238142624492}
   m_Layer: 0
   m_Name: Handle
@@ -111,6 +109,7 @@ GameObject:
   - component: {fileID: 4413683459309572}
   - component: {fileID: 33303388032829396}
   - component: {fileID: 65887422813443948}
+  - component: {fileID: 82493754120346828}
   m_Layer: 10
   m_Name: Blade
   m_TagString: Untagged
@@ -216,7 +215,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 75bccb4568715934d9472266aeead711, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -251,42 +250,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!23 &23753691380428074
-MeshRenderer:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1802633784776466}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 4294967295
-  m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 75bccb4568715934d9472266aeead711, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -359,8 +323,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.070245, y: 1.6166517, z: 1}
-  m_Center: {x: -0.5351221, y: -0.30832604, z: -0.000000026434705}
+  m_Size: {x: 1.6997869, y: 1.6166517, z: 1}
+  m_Center: {x: -0.72035104, y: -0.30832604, z: -0.000002230464}
 --- !u!65 &65887422813443948
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -383,7 +347,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -428,7 +392,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -468,17 +432,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!82 &82763856641438690
+--- !u!82 &82493754120346828
 AudioSource:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1149451773485746}
+  m_GameObject: {fileID: 1938041405848188}
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -523,7 +487,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -725,6 +689,6 @@ MonoBehaviour:
   _interactable: {fileID: 114180127751081740}
   razorAction: {fileID: 11400000, guid: 1dae5fbf25e816e41823852dacee9407, type: 2}
   _audioSource: {fileID: 82043602550801930}
-  _audioSourceCut: {fileID: 82763856641438690}
+  _audioSourceCut: {fileID: 82493754120346828}
   _onAudioClip: {fileID: 8300000, guid: 19aa8c44633fcfe4794a0bb086897ddd, type: 3}
   _cutAudioClip: {fileID: 8300000, guid: b5ce612c9677c044caf69d152d28ad8b, type: 3}
