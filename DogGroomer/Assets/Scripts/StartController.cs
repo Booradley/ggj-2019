@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Valve.VR;
@@ -29,5 +28,14 @@ public class StartController : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
 
         SceneManager.LoadScene("Main");
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            Application.Quit();
+            return;
+        }
     }
 }
