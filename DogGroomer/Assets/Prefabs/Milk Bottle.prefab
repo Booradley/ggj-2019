@@ -40,7 +40,7 @@ GameObject:
   - component: {fileID: 4893295316927002}
   - component: {fileID: 33506385818274672}
   - component: {fileID: 23588271006795042}
-  - component: {fileID: 65633578554793212}
+  - component: {fileID: 64866312002086646}
   m_Layer: 0
   m_Name: SHAVR_SET_MILKBOTTLE 1
   m_TagString: Untagged
@@ -70,7 +70,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1109146992957338}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.9, y: 0.75000024, z: -1.678}
+  m_LocalPosition: {x: -0.5909999, y: 0.75000024, z: -1.628}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children:
   - {fileID: 4807050784607974}
@@ -161,18 +161,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &65633578554793212
-BoxCollider:
+--- !u!64 &64866312002086646
+MeshCollider:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1696759961632736}
-  m_Material: {fileID: 13400000, guid: e63d944108f7f094d807ae0a6328e84c, type: 2}
+  m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 17.165148, y: 40.30297, z: 17.165146}
-  m_Center: {x: 0, y: 20.151485, z: -0.00000047683716}
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 606d9126e3140e8438ca42d7ebeab283, type: 3}
 --- !u!114 &114100493237665856
 MonoBehaviour:
   m_ObjectHideFlags: 1
