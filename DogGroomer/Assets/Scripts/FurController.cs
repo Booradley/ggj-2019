@@ -28,13 +28,30 @@ public class FurController : MonoBehaviour
     [SerializeField, Range(1, 10)]
     private int _hairNodes;
 
+    [SerializeField]
+    private int _cutFurInterval;
+
     private List<Fur> _fur = new List<Fur>();
     private ParticleSystem.Particle[] _particles;
-    List<ParticleSystem.Particle> enter = new List<ParticleSystem.Particle>();
+    private List<ParticleSystem.Particle> _enterParticles = new List<ParticleSystem.Particle>();
     private bool _isReady;
+    private int _cutFurCount;
 
     private void Awake()
     {
+        Reset();
+    }
+
+    public void Reset()
+    {
+        _isReady = false;
+
+        _cutFurParticleSystem.Clear();
+        _particleSystem.Clear();
+        _enterParticles.Clear();
+        _fur.Clear();
+        _particles = null;
+
         var emitParams = new ParticleSystem.EmitParams();
         emitParams.velocity = Vector3.zero;
         emitParams.startLifetime = 9999999f;
@@ -53,7 +70,7 @@ public class FurController : MonoBehaviour
                 continue;
 
             emitParams.startSize = GetHairSize(colors[i]);
-            
+
             for (int j = 0; j < _hairNodes; j++)
             {
                 emitParams.rotation3D = UnityEngine.Random.rotation.eulerAngles;
@@ -69,17 +86,17 @@ public class FurController : MonoBehaviour
         int stride = 0;
         for (int i = 0; i < count; i++)
         {
-            if (colors[i].r <= 0f)
-                continue;
+            if (colors[i].r > 0f)
+            {
+                float hairLength = GetHairLength(colors[i]);
 
-            float hairLength = GetHairLength(colors[i]);
+                Fur fur = new Fur(transform, _hairNodes);
+                fur.UpdateParticles(ref _particles, stride, vertices[i], normals[i], hairLength, _hairNodes, true);
 
-            Fur fur = new Fur(transform);
-            fur.UpdateParticles(ref _particles, stride, vertices[i], normals[i], hairLength, _hairNodes, true);
+                _fur.Add(fur);
 
-            _fur.Add(fur);
-
-            stride += _hairNodes;
+                stride += _hairNodes;
+            }
         }
 
         _particleSystem.SetParticles(_particles, _particles.Length);
@@ -94,21 +111,26 @@ public class FurController : MonoBehaviour
 
     private void OnParticleTrigger()
     {
-        int numEnter = _particleSystem.GetTriggerParticles(ParticleSystemTriggerEventType.Enter, enter);
+        int numEnter = _particleSystem.GetTriggerParticles(ParticleSystemTriggerEventType.Enter, _enterParticles);
         for (int i = 0; i < numEnter; i++)
         {
-            ParticleSystem.Particle p = enter[i];
+            ParticleSystem.Particle p = _enterParticles[i];
 
             if (p.remainingLifetime == 0f)
                 continue;
 
             p.remainingLifetime = 0f;
-            enter[i] = p;
+            _enterParticles[i] = p;
 
-            SpawnCutFur(p.position, p.startSize);
+            _cutFurCount++;
+
+            if (_cutFurCount % _cutFurInterval == 0)
+            {
+                SpawnCutFur(p.position, p.startSize);
+            }
         }
         
-        _particleSystem.SetTriggerParticles(ParticleSystemTriggerEventType.Enter, enter);
+        _particleSystem.SetTriggerParticles(ParticleSystemTriggerEventType.Enter, _enterParticles);
     }
 
     private void SpawnCutFur(Vector3 position, float size)
@@ -142,11 +164,7 @@ public class FurController : MonoBehaviour
         int stride = 0;
         for (int i = 0; i < count; i++)
         {
-            if (colors[i].r <= 0f)
-                continue;
-
             float hairLength = GetHairLength(colors[i]);
-
             _fur[i].UpdateParticles(ref _particles, stride, vertices[i], normals[i], hairLength, _hairNodes);
 
             stride += _hairNodes;
