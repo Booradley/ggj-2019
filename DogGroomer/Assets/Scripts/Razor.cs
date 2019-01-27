@@ -120,8 +120,8 @@ public class Razor : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             ratio = (float)i / 10f;
-            _audioSource.volume = 0.25f * ratio;
-            _audioSourceCut.volume = 0.25f * (1f - ratio);
+            _audioSource.volume = 0.25f * (1f - ratio);
+            _audioSourceCut.volume = 0.25f * ratio;
 
             yield return null;
         }
@@ -136,8 +136,8 @@ public class Razor : MonoBehaviour
         for (int i = 0; i < 10; i++)
         {
             ratio = (float)i / 10f;
-            _audioSource.volume = 0.25f * (1f - ratio);
-            _audioSourceCut.volume = 0.25f * ratio;
+            _audioSource.volume = 0.25f * ratio;
+            _audioSourceCut.volume = 0.25f * (1f - ratio);
 
             yield return null;
         }
