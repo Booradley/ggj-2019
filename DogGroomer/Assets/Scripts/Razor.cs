@@ -12,11 +12,27 @@ public class Razor : MonoBehaviour
     [SteamVR_DefaultAction("Razor")]
     public SteamVR_Action_Boolean razorAction;
 
+    [SerializeField]
+    private AudioSource _audioSource;
+
+    [SerializeField]
+    private AudioSource _audioSourceCut;
+
+    [SerializeField]
+    private AudioClip _onAudioClip;
+
+    [SerializeField]
+    private AudioClip _cutAudioClip;
+
     private Hand.AttachmentFlags _attachmentFlags = Hand.defaultAttachmentFlags & (~Hand.AttachmentFlags.SnapOnAttach) & (~Hand.AttachmentFlags.DetachOthers) & (~Hand.AttachmentFlags.VelocityMovement);
 
-    private Hand _hand;
     private bool _isOn;
-    private Coroutine _coroutine;
+    public bool isOn { get { return _isOn; } }
+
+    private Hand _hand;
+    private Coroutine _onCoroutine;
+    private Coroutine _cutCoroutine;
+    private bool _needsCut = false;
 
     private void HandHoverUpdate(Hand hand)
     {
@@ -39,42 +55,34 @@ public class Razor : MonoBehaviour
 
     private void OnDetachedFromHand(Hand hand)
     {
-        if (_coroutine != null)
-        {
-            StopCoroutine(_coroutine);
-            _coroutine = null;
-        }
-
-        _hand = null;
-        _isOn = false;
+        TurnOff();
     }
 
     private void Update()
     {
         if (_interactable.attachedToHand)
         {
-            SteamVR_Input_Sources hand = _interactable.attachedToHand.handType;
-            bool buttonDown = razorAction.GetState(hand);
+            //SteamVR_Input_Sources hand = _interactable.attachedToHand.handType;
+            bool buttonDown = true;// razorAction.GetState(hand);
             if (!_isOn && buttonDown)
             {
                 _isOn = true;
-                _coroutine = StartCoroutine(OnSequence());
+                _onCoroutine = StartCoroutine(OnSequence());
             }
             else if (_isOn && !buttonDown)
             {
-                _isOn = false;
-
-                if (_coroutine != null)
-                {
-                    StopCoroutine(_coroutine);
-                    _coroutine = null;
-                }
+                TurnOff();
             }
         }
     }
 
     private IEnumerator OnSequence()
     {
+        _audioSource.loop = true;
+        _audioSource.clip = _onAudioClip;
+        _audioSource.volume = 0.25f;
+        _audioSource.Play();
+
         WaitForSeconds interval = new WaitForSeconds(0.1f);
         while(true)
         {
@@ -86,5 +94,75 @@ public class Razor : MonoBehaviour
 
             yield return interval;
         }
+    }
+
+    public void CutFur()
+    {
+        _needsCut = true;
+
+        if (_cutCoroutine == null)
+        {
+            StartCoroutine(CutSequence());
+        }
+    }
+
+    private IEnumerator CutSequence()
+    {
+        if (_cutCoroutine != null)
+        {
+            StopCoroutine(_cutCoroutine);
+            _cutCoroutine = null;
+        }
+
+        _audioSourceCut.Play();
+
+        float ratio;
+        for (int i = 0; i < 10; i++)
+        {
+            ratio = (float)i / 10f;
+            _audioSource.volume = 0.25f * ratio;
+            _audioSourceCut.volume = 0.25f * (1f - ratio);
+
+            yield return null;
+        }
+
+        while (_needsCut)
+        {
+            _needsCut = false;
+
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            ratio = (float)i / 10f;
+            _audioSource.volume = 0.25f * (1f - ratio);
+            _audioSourceCut.volume = 0.25f * ratio;
+
+            yield return null;
+        }
+
+        _audioSourceCut.Stop();
+    }
+
+    private void TurnOff()
+    {
+        if (_onCoroutine != null)
+        {
+            StopCoroutine(_onCoroutine);
+            _onCoroutine = null;
+        }
+
+        if (_cutCoroutine != null)
+        {
+            StopCoroutine(_cutCoroutine);
+            _cutCoroutine = null;
+        }
+
+        _audioSource.Stop();
+        _audioSourceCut.Stop();
+
+        _hand = null;
+        _isOn = false;
     }
 }

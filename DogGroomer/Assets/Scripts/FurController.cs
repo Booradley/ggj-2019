@@ -17,16 +17,13 @@ public class FurController : MonoBehaviour
     [SerializeField]
     private Animator _animator;
 
-    [SerializeField]
-    private Razor _razor;
-
     [SerializeField, Range(0f, 1f)]
     private float _hairLength;
 
-    [SerializeField, Range(0f, 1f)]
+    [SerializeField, Range(0f, 100f)]
     private float _minHairSize;
 
-    [SerializeField, Range(0f, 1f)]
+    [SerializeField, Range(0f, 100f)]
     private float _maxHairSize;
 
     [SerializeField, Range(1, 10)]
@@ -49,6 +46,9 @@ public class FurController : MonoBehaviour
 
     [SerializeField]
     private List<Vector3> _tongueRotations;
+
+    [SerializeField]
+    private List<Razor> _razors;
 
     private List<Fur> _fur = new List<Fur>();
     private ParticleSystem.Particle[] _particles;
@@ -126,9 +126,16 @@ public class FurController : MonoBehaviour
         _isReady = true;
     }
 
-    public void SetActiveRazor(Razor razor)
+    private void OnParticleCollision(GameObject other)
     {
-        _razor = razor;
+        for (int i = 0; i < _razors.Count; i++)
+        {
+            if (other == _razors[i].gameObject)
+            {
+                _razors[i].CutFur();
+                return;
+            }
+        }
     }
 
     private void OnParticleTrigger()
