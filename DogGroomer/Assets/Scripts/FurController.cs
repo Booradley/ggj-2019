@@ -60,7 +60,9 @@ public class FurController : MonoBehaviour
     {
         Reset();
 
+        StartCoroutine(IdleSequence());
         StartCoroutine(BlinkSequence());
+        StartCoroutine(WagSequence());
         StartCoroutine(TongueSequence());
     }
 
@@ -175,6 +177,20 @@ public class FurController : MonoBehaviour
         _cutFurParticleSystem.Emit(emitParams, 1);
     }
 
+    private IEnumerator IdleSequence()
+    {
+        while (true)
+        {
+            float roll = UnityEngine.Random.value;
+            if (roll < 0.5f)
+            {
+                _animator.SetTrigger("Look");
+            }
+
+            yield return new WaitForSeconds(GetRandomIdleSeconds());
+        }
+    }
+
     private IEnumerator BlinkSequence()
     {
         while (true)
@@ -183,6 +199,12 @@ public class FurController : MonoBehaviour
 
             yield return new WaitForSeconds(GetRandomBlinkSeconds());
         }
+    }
+
+    private IEnumerator WagSequence()
+    {
+        _animator.SetBool("Wagging", true);
+        yield break;
     }
 
     private IEnumerator TongueSequence()
@@ -220,6 +242,11 @@ public class FurController : MonoBehaviour
     private float GetRandomBlinkSeconds()
     {
         return UnityEngine.Random.Range(3f, 8f);
+    }
+
+    private float GetRandomIdleSeconds()
+    {
+        return UnityEngine.Random.Range(5f, 10f);
     }
 
     private void LateUpdate()
