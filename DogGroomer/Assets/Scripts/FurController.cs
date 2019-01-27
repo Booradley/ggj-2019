@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,6 +13,9 @@ public class FurController : MonoBehaviour
 
     [SerializeField]
     private SkinnedMeshRenderer _skinnedMeshRenderer;
+
+    [SerializeField]
+    private Animator _animator;
 
     [SerializeField]
     private Razor _razor;
@@ -31,6 +35,21 @@ public class FurController : MonoBehaviour
     [SerializeField]
     private int _cutFurInterval;
 
+    [SerializeField]
+    private Transform _tongueBase;
+
+    [SerializeField]
+    private Vector3 _tongueInPosition;
+
+    [SerializeField]
+    private Vector3 _tongueInRotation;
+
+    [SerializeField]
+    private List<Vector3> _tonguePositions;
+
+    [SerializeField]
+    private List<Vector3> _tongueRotations;
+
     private List<Fur> _fur = new List<Fur>();
     private ParticleSystem.Particle[] _particles;
     private List<ParticleSystem.Particle> _enterParticles = new List<ParticleSystem.Particle>();
@@ -40,6 +59,9 @@ public class FurController : MonoBehaviour
     private void Awake()
     {
         Reset();
+
+        StartCoroutine(BlinkSequence());
+        StartCoroutine(TongueSequence());
     }
 
     public void Reset()
@@ -144,6 +166,53 @@ public class FurController : MonoBehaviour
         emitParams.velocity = UnityEngine.Random.insideUnitSphere;
 
         _cutFurParticleSystem.Emit(emitParams, 1);
+    }
+
+    private IEnumerator BlinkSequence()
+    {
+        while (true)
+        {
+            _animator.SetTrigger("Blink");
+
+            yield return new WaitForSeconds(GetRandomBlinkSeconds());
+        }
+    }
+
+    private IEnumerator TongueSequence()
+    {
+        while (true)
+        {
+            Vector3 initialPosition = _tongueBase.localPosition;
+            Vector3 initialRotation = _tongueBase.localRotation.eulerAngles;
+
+            int index = UnityEngine.Random.Range(0, _tonguePositions.Count);
+            for (int i = 0; i < 10; i++)
+            {
+                float ratio = (float)i / 10f;
+                _tongueBase.localPosition = Vector3.Lerp(initialPosition, _tongueInPosition, ratio);
+                _tongueBase.localRotation = Quaternion.Euler(Vector3.Lerp(initialRotation, _tongueInRotation, ratio));
+
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(0.25f);
+
+            for (int i = 0; i < 10; i++)
+            {
+                float ratio = (float)i / 10f;
+                _tongueBase.localPosition = Vector3.Lerp(_tongueInPosition, _tonguePositions[index], ratio);
+                _tongueBase.localRotation = Quaternion.Euler(Vector3.Lerp(_tongueInRotation, _tongueRotations[index], ratio));
+
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(GetRandomBlinkSeconds());
+        }
+    }
+
+    private float GetRandomBlinkSeconds()
+    {
+        return UnityEngine.Random.Range(3f, 8f);
     }
 
     private void LateUpdate()
