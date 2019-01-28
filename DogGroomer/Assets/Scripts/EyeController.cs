@@ -17,8 +17,8 @@ public class EyeController : MonoBehaviour
 
     private void Start()
     {
-        _initialLeftEyeRotation = _leftEye.rotation;
-        _initialRightEyeRotation = _rightEye.rotation;
+        _initialLeftEyeRotation = _leftEye.localRotation;
+        _initialRightEyeRotation = _rightEye.localRotation;
 
         StartCoroutine(EyeSequence());
     }
@@ -72,8 +72,8 @@ public class EyeController : MonoBehaviour
             }
             else
             {
-                _leftEye.rotation = _initialLeftEyeRotation;
-                _rightEye.rotation = _initialRightEyeRotation;
+                _leftEye.localRotation = _initialLeftEyeRotation;
+                _rightEye.localRotation = _initialRightEyeRotation;
             }
 
             yield return null;
