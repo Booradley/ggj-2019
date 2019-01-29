@@ -1,0 +1,136 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Eyelids
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Poodle_V1:Poodle_V1
+    m_Weight: 0
+  - m_Path: Poodle_V1:Poodle_V1/Poodle_V1:Body
+    m_Weight: 0
+  - m_Path: Poodle_V1:Poodle_V1/Poodle_V1:EyeLeft
+    m_Weight: 0
+  - m_Path: Poodle_V1:Poodle_V1/Poodle_V1:EyeLidBottom
+    m_Weight: 0
+  - m_Path: Poodle_V1:Poodle_V1/Poodle_V1:EyeLidTop
+    m_Weight: 0
+  - m_Path: Poodle_V1:Poodle_V1/Poodle_V1:EyeRight
+    m_Weight: 0
+  - m_Path: Poodle_V1:Poodle_V1/Poodle_V1:Face
+    m_Weight: 0
+  - m_Path: Poodle_V1:Poodle_V1/Poodle_V1:Paws
+    m_Weight: 0
+  - m_Path: Poodle_V1:Poodle_V1/Poodle_V1:Tounge
+    m_Weight: 0
+  - m_Path: root
+    m_Weight: 0
+  - m_Path: root/chest
+    m_Weight: 0
+  - m_Path: root/chest/back
+    m_Weight: 0
+  - m_Path: root/chest/back/hips
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_l
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_l/back_thigh_l
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_l/back_thigh_l/back_knee_l
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_l/back_thigh_l/back_knee_l/back_foot_l
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_l/back_thigh_l/back_knee_l/back_foot_l/back_toe_l
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_r
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_r/back_thigh_r
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_r/back_thigh_r/back_knee_r
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_r/back_thigh_r/back_knee_r/back_foot_r
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/back_hip_r/back_thigh_r/back_knee_r/back_foot_r/back_toe_r
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/tail_base
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/tail_base/tail_1
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/tail_base/tail_1/tail_2
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/tail_base/tail_1/tail_2/tail_3
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/tail_base/tail_1/tail_2/tail_3/tail_4
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/tail_base/tail_1/tail_2/tail_3/tail_4/tail_5
+    m_Weight: 0
+  - m_Path: root/chest/back/hips/tail_base/tail_1/tail_2/tail_3/tail_4/tail_5/tail_tip
+    m_Weight: 0
+  - m_Path: root/front_pelvis_l
+    m_Weight: 0
+  - m_Path: root/front_pelvis_l/front_thigh_l
+    m_Weight: 0
+  - m_Path: root/front_pelvis_l/front_thigh_l/front_knee_l
+    m_Weight: 0
+  - m_Path: root/front_pelvis_l/front_thigh_l/front_knee_l/front_foot_l
+    m_Weight: 0
+  - m_Path: root/front_pelvis_l/front_thigh_l/front_knee_l/front_foot_l/front_toe_l
+    m_Weight: 0
+  - m_Path: root/front_pelvis_r
+    m_Weight: 0
+  - m_Path: root/front_pelvis_r/front_thigh_r
+    m_Weight: 0
+  - m_Path: root/front_pelvis_r/front_thigh_r/front_knee_r
+    m_Weight: 0
+  - m_Path: root/front_pelvis_r/front_thigh_r/front_knee_r/front_foot_r
+    m_Weight: 0
+  - m_Path: root/front_pelvis_r/front_thigh_r/front_knee_r/front_foot_r/front_toe_r
+    m_Weight: 0
+  - m_Path: root/spine_5
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/ear_base_l
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/ear_base_l/ear_mid_l
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/ear_base_l/ear_mid_l/ear_tip_l
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/ear_base_r
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/ear_base_r/ear_mid_r
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/ear_base_r/ear_mid_r/ear_tip_r
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/eye_l
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/eye_r
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/eyelid_rower_l
+    m_Weight: 1
+  - m_Path: root/spine_5/spine_6/head/eyelid_rower_r
+    m_Weight: 1
+  - m_Path: root/spine_5/spine_6/head/eyelid_upper_l
+    m_Weight: 1
+  - m_Path: root/spine_5/spine_6/head/eyelid_upper_r
+    m_Weight: 1
+  - m_Path: root/spine_5/spine_6/head/head_tip
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/tongue_base
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/tongue_base/tongue_1
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/tongue_base/tongue_1/tongue_2
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/tongue_base/tongue_1/tongue_2/tongue_3
+    m_Weight: 0
+  - m_Path: root/spine_5/spine_6/head/tongue_base/tongue_1/tongue_2/tongue_3/tongue_tip
+    m_Weight: 0
+  - m_Path: shoulder
+    m_Weight: 0
