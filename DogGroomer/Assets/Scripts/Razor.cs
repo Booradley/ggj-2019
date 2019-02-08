@@ -8,9 +8,6 @@ public class Razor : FurInteractable
     [SerializeField]
     private Interactable _interactable;
 
-    [SteamVR_DefaultAction("Razor")]
-    public SteamVR_Action_Boolean razorAction;
-
     [SerializeField]
     private AudioSource _audioSource;
 
