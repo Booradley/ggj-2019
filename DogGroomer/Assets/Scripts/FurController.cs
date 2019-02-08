@@ -30,9 +30,6 @@ public class FurController : MonoBehaviour
     private int _hairNodes;
 
     [SerializeField]
-    private int _cutFurInterval;
-
-    [SerializeField]
     private Transform _tongueBase;
 
     [SerializeField]
@@ -48,16 +45,21 @@ public class FurController : MonoBehaviour
     private List<Vector3> _tongueRotations;
 
     [SerializeField]
-    private List<Razor> _razors;
+    private List<FurInteractable> _furInteractables;
 
     private List<Fur> _fur = new List<Fur>();
+    private Mesh _bakedMesh;
+    private List<Vector3> _vertices = new List<Vector3>();
+    private List<Vector3> _normals = new List<Vector3>();
+    private List<Color32> _colors = new List<Color32>();
     private ParticleSystem.Particle[] _particles;
     private List<ParticleSystem.Particle> _enterParticles = new List<ParticleSystem.Particle>();
     private bool _isReady;
-    private int _cutFurCount;
 
     private void Awake()
     {
+        _bakedMesh = new Mesh();
+
         Reset();
     }
 
@@ -77,24 +79,30 @@ public class FurController : MonoBehaviour
     {
         _isReady = false;
 
+        for (int i = 0; i < _fur.Count; i++)
+        {
+            _fur[i].onCut -= SpawnCutFur;
+            _fur[i].Cleanup();
+        }
+
+        _fur.Clear();
+        
         _cutFurParticleSystem.Clear();
         _particleSystem.Clear();
         _enterParticles.Clear();
-        _fur.Clear();
         _particles = null;
 
         var emitParams = new ParticleSystem.EmitParams();
         emitParams.velocity = Vector3.zero;
         emitParams.startLifetime = 9999999f;
+        
+        _skinnedMeshRenderer.BakeMesh(_bakedMesh);
 
-        Mesh mesh = new Mesh();
-        _skinnedMeshRenderer.BakeMesh(mesh);
+        Vector3[] vertices = _bakedMesh.vertices;
+        Vector3[] normals = _bakedMesh.normals;
+        Color32[] colors = _bakedMesh.colors32;
 
-        Vector3[] vertices = mesh.vertices;
-        Vector3[] normals = mesh.normals;
-        Color32[] colors = mesh.colors32;
-
-        int count = mesh.vertexCount;
+        int count = _bakedMesh.vertexCount;
         for (int i = 0; i < count; i++)
         {
             if (colors[i].r <= 0f)
@@ -122,6 +130,7 @@ public class FurController : MonoBehaviour
                 float hairLength = GetHairLength(colors[i]);
 
                 Fur fur = new Fur(transform, _hairNodes);
+                fur.onCut += SpawnCutFur;
                 fur.UpdateParticles(ref _particles, stride, vertices[i], normals[i], hairLength, _hairNodes, true);
 
                 _fur.Add(fur);
@@ -134,49 +143,54 @@ public class FurController : MonoBehaviour
 
         _isReady = true;
     }
-
-    private void OnParticleCollision(GameObject other)
-    {
-        for (int i = 0; i < _razors.Count; i++)
-        {
-            if (other == _razors[i].gameObject)
-            {
-                _razors[i].CutFur();
-                return;
-            }
-        }
-    }
     
     private void OnParticleTrigger()
     {
         int numEnter = _particleSystem.GetTriggerParticles(ParticleSystemTriggerEventType.Enter, _enterParticles);
+
         for (int i = 0; i < numEnter; i++)
         {
             ParticleSystem.Particle p = _enterParticles[i];
 
-            if (p.remainingLifetime == 0f)
-                continue;
-
-            p.remainingLifetime = 0f;
-            _enterParticles[i] = p;
-
-            _cutFurCount++;
-
-            if (_cutFurCount % _cutFurInterval == 0)
+            FurInteractable closestInteractable = null;
+            float smallestDistance = float.MaxValue;
+            for (int j = 0; j < _furInteractables.Count; j++)
             {
-                SpawnCutFur(p.position, p.startSize);
+                float distance = Vector3.Distance(_furInteractables[j].transform.position, p.position);
+                if (distance < smallestDistance)
+                {
+                    smallestDistance = distance;
+                    closestInteractable = _furInteractables[j];
+                }
             }
+
+            closestInteractable.Interact();
+            
+            if (closestInteractable is Razor)
+            {
+                if (p.remainingLifetime > 0f)
+                    SpawnCutFur(p.position, p.startSize, p.startColor);
+                    
+                p.remainingLifetime = 0f;
+            }
+            else if (closestInteractable is Brush)
+            {
+                p.startColor = (closestInteractable as Brush).color;
+            }
+
+            _enterParticles[i] = p;
         }
         
         _particleSystem.SetTriggerParticles(ParticleSystemTriggerEventType.Enter, _enterParticles);
     }
 
-    private void SpawnCutFur(Vector3 position, float size)
+    private void SpawnCutFur(Vector3 position, float size, Color color)
     {
         var emitParams = new ParticleSystem.EmitParams();
         emitParams.velocity = Vector3.zero;
         emitParams.startLifetime = 9999999f;
         emitParams.startSize = size;
+        emitParams.startColor = color;
         emitParams.position = position;
         emitParams.rotation3D = UnityEngine.Random.rotation.eulerAngles;
         emitParams.velocity = UnityEngine.Random.insideUnitSphere;
@@ -264,13 +278,16 @@ public class FurController : MonoBehaviour
     {
         if (!_isReady)
             return;
+        
+        _skinnedMeshRenderer.BakeMesh(_bakedMesh);
 
-        Mesh mesh = new Mesh();
-        _skinnedMeshRenderer.BakeMesh(mesh);
+        _bakedMesh.GetVertices(_vertices);
 
-        Vector3[] vertices = mesh.vertices;
-        Vector3[] normals = mesh.normals;
-        Color32[] colors = mesh.colors32;
+        if (_normals.Count == 0)
+            _bakedMesh.GetNormals(_normals);
+
+        if (_colors.Count == 0)
+            _bakedMesh.GetColors(_colors);
 
         _particleSystem.GetParticles(_particles);
 
@@ -278,9 +295,7 @@ public class FurController : MonoBehaviour
         int stride = 0;
         for (int i = 0; i < count; i++)
         {
-            float hairLength = GetHairLength(colors[i]);
-            _fur[i].UpdateParticles(ref _particles, stride, vertices[i], normals[i], hairLength, _hairNodes);
-
+            _fur[i].UpdateParticles(ref _particles, stride, _vertices[i], _normals[i], GetHairLength(_colors[i]), _hairNodes, false);
             stride += _hairNodes;
         }
 

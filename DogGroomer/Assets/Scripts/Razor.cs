@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using Valve.VR;
 using Valve.VR.InteractionSystem;
 
-public class Razor : MonoBehaviour
+public class Razor : FurInteractable
 {
     [SerializeField]
     private Interactable _interactable;
@@ -24,6 +23,9 @@ public class Razor : MonoBehaviour
     [SerializeField]
     private AudioClip _cutAudioClip;
 
+    [SerializeField]
+    private SteamVR_Action_Vibration _hapticAction;
+
     private Hand.AttachmentFlags _attachmentFlags = Hand.defaultAttachmentFlags & (~Hand.AttachmentFlags.SnapOnAttach) & (~Hand.AttachmentFlags.DetachOthers) & (~Hand.AttachmentFlags.VelocityMovement);
 
     private bool _isOn;
@@ -36,6 +38,7 @@ public class Razor : MonoBehaviour
     private Coroutine _cutCoroutine;
     private Coroutine _cutEndCoroutine;
     private bool _needsCut = false;
+    private float _hapticAmplitude = 0.02f;
 
     private void Start()
     {
@@ -55,23 +58,9 @@ public class Razor : MonoBehaviour
         transform.rotation = _initialRotation;
     }
 
-    private void HandHoverUpdate(Hand hand)
+    private void OnAttachedToHand(Hand hand)
     {
-        GrabTypes startingGrabType = hand.GetGrabStarting();
-        bool isGrabEnding = hand.IsGrabEnding(this.gameObject);
-
-        if (_interactable.attachedToHand == null && startingGrabType != GrabTypes.None)
-        {
-            hand.HoverLock(_interactable);
-            hand.AttachObject(gameObject, startingGrabType, _attachmentFlags);
-
-            _hand = hand;
-        }
-        else if (isGrabEnding)
-        {
-            hand.DetachObject(gameObject);
-            hand.HoverUnlock(_interactable);
-        }
+        _hand = hand;
     }
 
     private void OnDetachedFromHand(Hand hand)
@@ -109,15 +98,14 @@ public class Razor : MonoBehaviour
         {
             if (_hand != null)
             {
-                float pulse = 800f;
-                _hand.TriggerHapticPulse((ushort)pulse);
+                _hapticAction.Execute(0, 0.05f, 50, _hapticAmplitude, _hand.handType);
             }
 
             yield return interval;
         }
     }
 
-    public void CutFur()
+    public override void Interact()
     {
         _needsCut = true;
 
@@ -159,10 +147,14 @@ public class Razor : MonoBehaviour
             yield return null;
         }
 
+        _hapticAmplitude = 1.0f;
+
         while (_needsCut)
         {
             yield return null;
         }
+
+        _hapticAmplitude = 0.02f;
 
         for (int i = 0; i < 10; i++)
         {

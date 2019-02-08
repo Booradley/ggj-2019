@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Fur
 {
+    public event Action<Vector3, float, Color> onCut;
+
     private Transform _transform;
     private List<Vector3> _offsets;
 
@@ -12,15 +15,44 @@ public class Fur
         _offsets = new List<Vector3>();
         for (int i = 0; i < hairNodes; i++)
         {
-            _offsets.Add(Random.insideUnitSphere * 0.02f);
+            _offsets.Add(UnityEngine.Random.insideUnitSphere * 0.02f);
         }
     }
 
-    public void UpdateParticles(ref ParticleSystem.Particle[] particles, int stride, Vector3 vertexPosition, Vector3 vertexNormal, float hairLength, int hairNodes, bool forcePosition = false)
+    public void Cleanup()
     {
-        for (int j = 0; j < hairNodes; j++)
+        _transform = null;
+        _offsets.Clear();
+    }
+
+    public void UpdateParticles(ref ParticleSystem.Particle[] particles, int stride, Vector3 vertexPosition, Vector3 vertexNormal, float hairLength, int hairNodes, bool forcePosition, Action<Vector3, float> spawnFunc = null)
+    {
+        bool foundCutNode = false;
+        for (int j = hairNodes - 1; j >= 0; j--)
         {
             ParticleSystem.Particle particle = particles[stride + j];
+
+            if (particle.remainingLifetime <= 0f)
+            {
+                if (!foundCutNode)
+                    foundCutNode = true;
+
+                particles[stride + j] = particle;
+
+                continue;
+            }
+
+            if (foundCutNode && particle.remainingLifetime > 0f)
+            {
+                particle.remainingLifetime = 0f;
+
+                if (onCut != null)
+                    onCut(particle.position, particle.startSize, particle.startColor);
+
+                particles[stride + j] = particle;
+
+                continue;
+            }
 
             Vector3 normalOffset = vertexNormal * (1f - (float)(j + 1) / (float)hairNodes) * hairLength;
 

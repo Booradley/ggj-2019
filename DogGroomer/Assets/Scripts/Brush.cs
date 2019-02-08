@@ -1,16 +1,24 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Brush : MonoBehaviour {
+public class Brush : FurInteractable
+{
+    [SerializeField]
+    private Color _color;
+    public Color color {  get { return _color; } }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    [SerializeField]
+    private MeshRenderer _brushRenderer;
+
+    [SerializeField]
+    private int _brushColorMaterialIndex;
+
+    public void Awake()
+    {
+        _brushRenderer.materials[_brushColorMaterialIndex].color = _color;
+    }
+
+    public override void Interact()
+    {
+
+    }
 }
